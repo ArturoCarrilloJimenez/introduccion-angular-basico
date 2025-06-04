@@ -45,17 +45,18 @@ ng serve -o
 
 #### Comandos para generar los diferentes componentes, servicios, guardias, etc.
 
-| **Comando**                                    | **Descripción**                                                                 |
-| ---------------------------------------------- | ------------------------------------------------------------------------------ |
-| `ng g component [name]` </br> `ng g c [name]`  | Genera un nuevo componente en la ruta o nombre indicado (`[path/name]`).       |
-| `ng g directive [name]` </br> `ng g d [name]`  | Crea una nueva directiva.                                                       |
-| `ng g guard [name]` </br> `ng g g [name]`      | Crea un nuevo guard para protección de rutas.                                   |
-| `ng g interceptor [name]`                      | Crea un interceptor para interceptar y manipular peticiones HTTP (observables). |
-| `ng g module [name]` </br> `ng g m [name]`     | Crea un nuevo módulo, que agrupará componentes, directivas, servicios, etc.     |
-| `ng g pipe [name]` </br> `ng g p [name]`       | Crea un pipe que actúa como transformador de datos en plantillas.               |
-| `ng g service [name]` </br> `ng g s [name]`    | Crea un servicio para compartir lógica o datos entre distintos componentes.     |
+| **Comando**                                   | **Descripción**                                                                 |
+| --------------------------------------------- | ------------------------------------------------------------------------------- |
+| `ng g component [name]` </br> `ng g c [name]` | Genera un nuevo componente en la ruta o nombre indicado (`[path/name]`).        |
+| `ng g directive [name]` </br> `ng g d [name]` | Crea una nueva directiva.                                                       |
+| `ng g guard [name]` </br> `ng g g [name]`     | Crea un nuevo guard para protección de rutas.                                   |
+| `ng g interceptor [name]`                     | Crea un interceptor para interceptar y manipular peticiones HTTP (observables). |
+| `ng g module [name]` </br> `ng g m [name]`    | Crea un nuevo módulo, que agrupará componentes, directivas, servicios, etc.     |
+| `ng g pipe [name]` </br> `ng g p [name]`      | Crea un pipe que actúa como transformador de datos en plantillas.               |
+| `ng g service [name]` </br> `ng g s [name]`   | Crea un servicio para compartir lógica o datos entre distintos componentes.     |
 
-> **Nota:** Todos los comandos aceptan la forma abreviada (`c`, `d`, `g`, `m`, `p`, `s`) y pueden recibir rutas anidadas, por ejemplo: `ng g component usuarios/perfil`.
+> [!NOTE]
+> Todos los comandos aceptan la forma abreviada (`c`, `d`, `g`, `m`, `p`, `s`) y pueden recibir rutas anidadas, por ejemplo: `ng g component usuarios/perfil`.
 
 ---
 
@@ -63,77 +64,27 @@ ng serve -o
 
 Al generar un componente con Angular CLI, se crea una carpeta que normalmente incluye cuatro archivos principales (aunque solo utilizaremos habitualmente los dos primeros):
 
-src/app/[nombre-componente]/
-├── [nombre-componente].component.ts # Lógica en TypeScript y decorador @Component
-├── [nombre-componente].component.html # Plantilla HTML relacionada al componente
-├── [nombre-componente].component.css # Hoja de estilos CSS específica (puede ser .scss, .sass, etc.)
-└── [nombre-componente].component.spec.ts # Pruebas unitarias (Jasmine/Karma)
+1. **`[nombre-componente].component.ts`**
 
-markdown
-Copiar
-Editar
-
-1. **`[nombre-componente].component.ts`**  
-   - Define la clase del componente y el decorador `@Component` con metadatos (selector, templateUrl, styleUrls).  
+   - Define la clase del componente y el decorador `@Component` con metadatos (selector, templateUrl, styleUrls).
    - Contiene la lógica de presentación (propiedades, métodos, ciclo de vida).
 
-2. **`[nombre-componente].component.html`**  
-   - Plantilla HTML donde se define la estructura de la interfaz de usuario del componente.  
+2. **`[nombre-componente].component.html`**
+
+   - Plantilla HTML donde se define la estructura de la interfaz de usuario del componente.
    - Suelen incluirse directivas de Angular (p. ej., `*ngIf`, `*ngFor`, `[property]`, `(event)`).
 
-3. **`[nombre-componente].component.css`**  
-   - Estilos específicos de ese componente.  
+3. **`[nombre-componente].component.css`**
+
+   - Estilos específicos de ese componente.
    - Estos estilos están encapsulados por defecto (ViewEncapsulation), de modo que no afectan a otros componentes.
 
-4. **`[nombre-componente].component.spec.ts`**  
-   - Archivo de pruebas unitarias creado automáticamente.  
+4. **`[nombre-componente].component.spec.ts`**
+   - Archivo de pruebas unitarias creado automáticamente.
    - Se recomienda mantenerlo y complementar con test adicionales según crezca la complejidad del componente.
 
-> **Recomendación:** Aunque Angular CLI genera la hoja de estilos (`.css`) y el archivo de pruebas (`.spec.ts`), en entornos corporativos o cursos introductorios puede optarse por minimizar estos dos archivos hasta que se aborden buenas prácticas de estilos avanzados y pruebas unitarias. Lo esencial al empezar es comprender la relación entre `*.component.ts` y `*.component.html`.
-
----
-
-#### Ejemplo práctico
-
-1. **Generar un nuevo componente llamado `usuario-lista`**  
-   ```bash
-   ng g component usuario-lista
-Verificar la estructura generada
-
-bash
-Copiar
-Editar
-src/app/usuario-lista/
-├── usuario-lista.component.ts
-├── usuario-lista.component.html
-├── usuario-lista.component.css
-└── usuario-lista.component.spec.ts
-Registrar el componente en el módulo (si no se hizo automáticamente)
-En app.module.ts:
-
-ts
-Copiar
-Editar
-import { UsuarioListaComponent } from './usuario-lista/usuario-lista.component';
-
-@NgModule({
-  declarations: [
-    AppComponent,
-    UsuarioListaComponent,  // ← Componente generado
-    /* …otros componentes… */
-  ],
-  imports: [ BrowserModule ],
-  bootstrap: [ AppComponent ]
-})
-export class AppModule { }
-Usar el selector en la plantilla principal
-En app.component.html (u otro componente):
-
-html
-Copiar
-Editar
-<app-usuario-lista></app-usuario-lista>
-Con estos comandos y la estructura descrita, dispondrá de la base para crear y organizar componentes de manera profesional y escalable dentro de un proyecto Angular. ```
+> [!TIP]
+> Aunque Angular CLI genera la hoja de estilos (`.css`) y el archivo de pruebas (`.spec.ts`), en entornos corporativos o cursos introductorios puede optarse por minimizar estos dos archivos hasta que se aborden buenas prácticas de estilos avanzados y pruebas unitarias. Lo esencial al empezar es comprender la relación entre `*.component.ts` y `*.component.html`.
 
 ---
 
