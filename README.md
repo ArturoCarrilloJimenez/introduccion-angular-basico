@@ -23,7 +23,7 @@ Esta es una guía básica de angular a nivel muy básico que explica con varios 
 
 ## 3. Contenido
 
-## 3.1. `00-start` – Comandos Básicos para iniciar un proyecto
+### 3.1. `00-start` – Comandos Básicos para iniciar un proyecto
 
 ```bash
 # Instalación del cli de angular
@@ -58,8 +58,6 @@ ng serve -o
 > [!NOTE]
 > Todos los comandos aceptan la forma abreviada (`c`, `d`, `g`, `m`, `p`, `s`) y pueden recibir rutas anidadas, por ejemplo: `ng g component usuarios/perfil`.
 
----
-
 #### Estructura de carpetas de un componente
 
 Al generar un componente con Angular CLI, se crea una carpeta que normalmente incluye cuatro archivos principales (aunque solo utilizaremos habitualmente los dos primeros):
@@ -86,88 +84,173 @@ Al generar un componente con Angular CLI, se crea una carpeta que normalmente in
 > [!TIP]
 > Aunque Angular CLI genera la hoja de estilos (`.css`) y el archivo de pruebas (`.spec.ts`), en entornos corporativos o cursos introductorios puede optarse por minimizar estos dos archivos hasta que se aborden buenas prácticas de estilos avanzados y pruebas unitarias. Lo esencial al empezar es comprender la relación entre `*.component.ts` y `*.component.html`.
 
----
+### 3.3 `02-inputs` – Pasar Datos al Componente (**Input**)
 
-### 4.3 `02-inputs` – Pasar Datos al Componente (Input)
+Una de las claves para crear componentes reutilizables en Angular es poder pasar datos desde un componente padre a uno hijo. Esto se logra mediante la propiedad **@Input** o usando **input signals** a partir de Angular 17.
 
-1. **Definir propiedad con `@Input()` en componente hijo**
+#### Forma tradicional con `@Input()`
 
-   ```ts
-   // src/app/input/child.component.ts
-   import { Component, Input } from "@angular/core";
+```ts
+// src/app/input/child.component.ts
+import { Component, Input } from "@angular/core";
 
-   @Component({
-     selector: "app-child",
-     template: `<p>Mensaje recibido: {{ mensaje }}</p>`,
-   })
-   export class ChildComponent {
-     @Input() mensaje: string = "";
-   }
-   ```
+@Component({
+  selector: "app-child",
+  template: `<p>Mensaje recibido: {{ mensaje }}</p>`,
+})
+export class ChildComponent {
+  @Input() mensaje: string = "";
+}
+```
 
-2. **En el componente padre, pasar valor**
-   ```html
-   <!-- src/app/parent/parent.component.html -->
-   <app-child [mensaje]="'Hola desde el padre'"></app-child>
-   ```
-3. **Verificar que se muestra en pantalla**
-   - `ng serve`
-   - Asegurarse de que “Mensaje recibido: Hola desde el padre” aparece correctamente.
+### Nueva forma con `input() signal` **(Angular 17+)**
 
----
+```ts
+// src/app/input/child.component.ts
+import { Component, input } from "@angular/core";
 
-### 4.4 `03-outputs` – Emitir Eventos al Padre (Output)
+@Component({
+  selector: "app-child",
+  template: `<p>Mensaje recibido: {{ message() }}</p>`,
+})
+export class ChildComponent {
+  // Input requerido
+  message = input.required<string>();
 
-1. **Definir `@Output()` y `EventEmitter` en componente hijo**
+  // Input opcional con valor por defecto
+  optionalMessage = input<string>("Mensaje por defecto");
+}
+```
 
-   ```ts
-   // src/app/output/child.component.ts
-   import { Component, Output, EventEmitter } from "@angular/core";
+### Cómo pasar datos desde el componente padre
 
-   @Component({
-     selector: "app-child",
-     template: `<button (click)="enviarEvento()">Enviar</button>`,
-   })
-   export class ChildComponent {
-     @Output() clicEvento = new EventEmitter<string>();
+La sintaxis en la plantilla HTML del componente padre no cambia, independientemente del método utilizado:
 
-     enviarEvento() {
-       this.clicEvento.emit("¡Clic detectado en hijo!");
-     }
-   }
-   ```
+```html
+<!-- src/app/parent/parent.component.html -->
+<app-child [mensaje]="'Hola desde el padre'"></app-child>
+```
 
-2. **Suscribirse al evento en componente padre**
+> [!IMPORTANT]
+> Asegúrate de que el nombre del atributo usado en la plantilla ([mensaje]) coincida con el decorador @Input() o la propiedad input() definida en el hijo.
 
-   ```html
-   <!-- src/app/parent/parent.component.html -->
-   <app-child (clicEvento)="recibirMensaje($event)"></app-child>
-   <p>Mensaje del hijo: {{ mensajeRecibido }}</p>
-   ```
+#### Comparativa: `@Input()` vs. `input()` Signal
 
-   ```ts
-   // src/app/parent/parent.component.ts
-   import { Component } from "@angular/core";
+| **Característica**             | **`@Input()` (Forma tradicional)**                                                                                                                                             | **`input()` Signal (Angular 17+)**                                                                                                                                                         |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Declaración**                | - Decorador en la clase del componente hijo:<br> `@Input() propiedad: Tipo`<br> - Se expone como atributo en la plantilla del padre.                                           | - Función `input()` en la clase del componente hijo:<br> `message = input.required<string>()`<br> - Se define de forma reactiva, sin necesidad de decoradores adicionales.                 |
+| **Detección de cambios**       | - Basada en el mecanismo de “change detection” de Angular (check always).<br> - Cada ciclo revisa si el valor cambió.<br> - Para lógica adicional, se utiliza `ngOnChanges()`. | - Sistema de señales: solo se notifica cuando el valor realmente cambia.<br> - No requiere `ngOnChanges()`; la propia señal dispara la actualización de la vista.                          |
+| **Rendimiento**                | - Puede generar ciclos de chequeo en cascada, incluso si el valor no cambia.<br> - En aplicaciones muy grandes, revisiones frecuentes impactan ligeramente.                    | - Solo se recomputa cuando la señal recibe un nuevo valor.<br> - Minimiza re-renderizados innecesarios en componentes anidados.<br> - Escala mejor en proyectos de alta complejidad.       |
+| **Simplicidad de uso**         | - Muy familiar y documentado en todas las versiones anteriores.<br> - Requiere sincronizar nombres entre padre e hijo y, si hay lógica, implementar `ngOnChanges()`.           | - Enfoque declarativo: el hijo “escucha” automáticamente la señal.<br> - Reduce boilerplate: no hay que implementar hooks de ciclo de vida para detectar cambios.                          |
+| **Legibilidad/Mantenibilidad** | - Separación clara: padre asigna valor, hijo recibe con `@Input()`.<br> - Lógica de cambio dispersa si se usa `ngOnChanges()`.                                                 | - Clara intención reactiva: el hijo define explícitamente “qué señal recibe”.<br> - Facilita composición con otras señales (`computed()`, `effect()`).                                     |
+| **Compatibilidad/Futuro**      | - Sigue siendo totalmente soportado y no se deprecará.<br> - Ideal para proyectos existentes que no requieran migrar a señales.                                                | - Representa la evolución del modelo reactivo de Angular.<br> - Permite adaptar APIs futuras (formularios, router, etc.) a un rendimiento optimizado con señales.                          |
+| **Cuándo usarlo**              | - Proyectos legacy o módulos sencillos sin necesidad de lógica compleja al recibir cambios.<br> - Casos donde la sobrecarga de `ngOnChanges()` es aceptable.                   | - Nuevos proyectos donde se busque un enfoque completamente reactivo.<br> - Componentes que reaccionan a cambios en tiempo real sin hooks adicionales.<br> - Alta escalabilidad requerida. |
 
-   @Component({
-     selector: "app-parent",
-     templateUrl: "./parent.component.html",
-   })
-   export class ParentComponent {
-     mensajeRecibido: string = "";
+> [!NOTE]
+>
+> - `@Input()` continuará siendo la base para la mayoría de aplicaciones existentes
+> - `input()` Signal impulsa un modelo de reactividad de próxima generación, reduciendo ciclos de detección y facilitando arquitecturas más escalables y mantenibles.
 
-     recibirMensaje(evento: string) {
-       this.mensajeRecibido = evento;
-     }
-   }
-   ```
+### 3.4 `03-outputs` – Emitir Eventos al Padre (**Output**)
 
-3. **Probar en navegador**
-   - Al hacer clic en el botón del hijo, la variable `mensajeRecibido` debe actualizarse.
+Para que un componente hijo notifique al padre sobre eventos o cambios, Angular ofrece tradicionalmente el decorador `@Output()` con `EventEmitter`.**A partir de Angular 17** se introduce la función` output()`, que simplifica la declaración y optimiza el manejo de eventos.
 
----
+#### Forma tradicional con @Output()
 
-### 4.5 `04-ngmodel` – Two-Way Binding con `ngModel`
+```ts
+// src/app/output/child.component.ts
+import { Component, Output, EventEmitter } from "@angular/core";
+
+@Component({
+  selector: "app-child",
+  template: `<button (click)="enviarEvento()">Enviar mensaje</button>`,
+})
+export class ChildComponent {
+  @Output() clicEvento = new EventEmitter<string>();
+
+  enviarEvento(): void {
+    this.clicEvento.emit("¡Datos desde el hijo!");
+  }
+}
+```
+
+`@Output()` define una propiedad pública que emite eventos hacia el componente padre.
+
+El padre deberá suscribirse a (clicEvento) en la plantilla para manejar la información.
+
+#### Nueva forma con output() (Angular 17+)
+
+```ts
+// src/app/output/child.component.ts
+import { Component, output } from "@angular/core";
+
+@Component({
+  selector: "app-child",
+  template: `<button (click)="enviarEvento()">Enviar mensaje</button>`,
+})
+export class ChildComponent {
+  // Declaración reactiva de un evento de salida
+  readonly clicEvento = output<string>();
+
+  enviarEvento(): void {
+    // Lanza el valor al padre; equivale a EventEmitter.emit()
+    this.clicEvento.emit("¡Datos desde el hijo!");
+  }
+}
+```
+
+`output<T>()` crea un emisor de eventos sin necesidad del decorador @Output().
+
+Se declara como propiedad de solo lectura (readonly), fomentando inmutabilidad.
+
+El ``método .emit(...)`` __funciona idéntico__ a EventEmitter.emit(...), pero la API reacciona de forma más “fina” a suscripciones.
+
+#### Cómo escuchar eventos en el componente padre
+
+La sintaxis en la plantilla del padre es idéntica en ambos casos; solo cambia el origen interno del evento:
+
+```html
+<!-- src/app/parent/parent.component.html -->
+<app-child (clicEvento)="recibirMensaje($event)"></app-child>
+<p>Mensaje del hijo: {{ mensajeRecibido }}</p>
+```
+
+```ts
+// src/app/parent/parent.component.ts
+import { Component } from "@angular/core";
+
+@Component({
+  selector: "app-parent",
+  templateUrl: "./parent.component.html",
+})
+export class ParentComponent {
+  mensajeRecibido: string = "";
+
+  recibirMensaje(valor: string): void {
+    this.mensajeRecibido = valor;
+  }
+}
+```
+
+> [!IMPORTANT]
+> Asegúrate de que el nombre del evento en la plantilla ((clicEvento)) coincida con la propiedad declarada en el hijo, ya sea @Output() clicEvento o readonly clicEvento = output<string>().
+
+| **Característica**             | **`@Output()` (Tradicional)**                                                                                                                     | **`output()` (Angular 17+)**                                                                                                                                 |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Declaración**                | - Decorador en la clase del hijo:<br> `@Output() evento = new EventEmitter<T>()`<br> - Define una propiedad pública mutable.                      | - Función `output<T>()` en la clase del hijo:<br> `readonly evento = output<T>()`<br> - Se define como señal inmutable (solo lectura).                       |
+| **Detección de eventos**       | - Basado en la implementación de `EventEmitter`, que envía eventos al padre.<br> - El ciclo de detección de cambios de Angular notifica al padre. | - Internamente optimizado para notificar solo cuando `.emit()` se invoca.<br> - Se integra con el sistema de señales, evitando detecciones innecesarias.     |
+| **Rendimiento**                | - Cada emisión recorre la cadena de suscripciones de `EventEmitter`.<br> - Puede generar sobrecarga en componentes muy anidados.                  | - Solo dispara notificaciones a suscriptores cuando `.emit()` se invoca con un nuevo valor.<br> - Minimiza re-renderizados en estructuras profundas.         |
+| **Simplicidad de uso**         | - Muy familiar para versiones anteriores.<br> - Requiere `import { Output, EventEmitter } from "@angular/core"`.                                  | - Más conciso: `import { output } from "@angular/core"`.<br> - No hay necesidad de instanciar `new EventEmitter()`.                                          |
+| **Legibilidad/Mantenibilidad** | - Lógica de emisión dispersa (constructor + métodos).<br> - Propiedad mutable: riesgo de reasignaciones accidentales.                             | - Propiedad inmutable (`readonly`).<br> - Código más declarativo: queda claro “qué eventos expone” el componente desde la firma de la clase.                 |
+| **Compatibilidad/Futuro**      | - Totalmente soportado y no se deprecará.<br> - API establecida, ideal para proyectos existentes que no usen señales.                             | - Parte del modelo de señales de Angular (17+).<br> - Se espera que más APIs internas (router, formularios) adopten este patrón para mejorar la reactividad. |
+| **Cuándo usarlo**              | - Proyectos legacy o módulos sencillos que no requieran migrar a señales.<br> - Casos donde el sobrecosto de `EventEmitter` es aceptable.         | - Nuevos proyectos o módulos donde se busque un enfoque totalmente reactivo.<br> - Componentes con alta frecuencia de eventos que requieren eficiencia.      |
+
+> [!NOTE]
+>
+> - @Output() seguirá existiendo para garantizar compatibilidad plena.
+> - output() impulsa una evolución hacia un sistema de eventos más reactivo y optimizado para Angular en el futuro.
+
+### 3.5 `04-ngmodel` – Two-Way Binding con `ngModel`
 
 1. **Importar `FormsModule` en el módulo**
    ```ts
@@ -210,7 +293,7 @@ Al generar un componente con Angular CLI, se crea una carpeta que normalmente in
 
 ---
 
-### 4.6 `05-http-service` – Servicio y Llamadas HTTP
+### 3.6 `05-http-service` – Servicio y Llamadas HTTP
 
 1. **Importar `HttpClientModule` en el módulo**
    ```ts
@@ -280,7 +363,7 @@ Al generar un componente con Angular CLI, se crea una carpeta que normalmente in
 
 ---
 
-## 5. Instrucciones Generales de Uso
+## 4. Instrucciones Generales de Uso
 
 1. **Clonar el repositorio y acceder a la carpeta**
    ```bash
@@ -304,7 +387,7 @@ Al generar un componente con Angular CLI, se crea una carpeta que normalmente in
 
 ---
 
-## 6. Buenas Prácticas y Próximos Pasos
+## 5. Buenas Prácticas y Próximos Pasos
 
 - **Arquitectura modular:** Organizar cada conjunto de componentes y servicios en su propio módulo para facilitar el mantenimiento y escalabilidad.
 - **Lazy loading:** Cargar módulos de forma diferida cuando sean necesarios, reduciendo el tamaño del bundle inicial.
