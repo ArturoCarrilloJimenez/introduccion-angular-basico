@@ -103,7 +103,7 @@ export class ChildComponent {
 }
 ```
 
-### Nueva forma con `input() signal` **(Angular 17+)**
+#### Nueva forma con `input() signal` **(Angular 17+)**
 
 ```ts
 // src/app/input/child.component.ts
@@ -122,7 +122,7 @@ export class ChildComponent {
 }
 ```
 
-### Cómo pasar datos desde el componente padre
+#### Cómo pasar datos desde el componente padre
 
 La sintaxis en la plantilla HTML del componente padre no cambia, independientemente del método utilizado:
 
@@ -132,7 +132,7 @@ La sintaxis en la plantilla HTML del componente padre no cambia, independienteme
 ```
 
 > [!IMPORTANT]
-> Asegúrate de que el nombre del atributo usado en la plantilla ([mensaje]) coincida con el decorador @Input() o la propiedad input() definida en el hijo.
+> Asegúrate de que el nombre del atributo usado en la plantilla (**[mensaje]**) **coincida** con el decorador **@Input()** o la propiedad **input()** definida en el hijo.
 
 #### Comparativa: `@Input()` vs. `input()` Signal
 
@@ -203,7 +203,7 @@ export class ChildComponent {
 
 Se declara como propiedad de solo lectura (readonly), fomentando inmutabilidad.
 
-El ``método .emit(...)`` __funciona idéntico__ a EventEmitter.emit(...), pero la API reacciona de forma más “fina” a suscripciones.
+El `método .emit(...)` **funciona idéntico** a EventEmitter.emit(...), pero la API reacciona de forma más “fina” a suscripciones.
 
 #### Cómo escuchar eventos en el componente padre
 
