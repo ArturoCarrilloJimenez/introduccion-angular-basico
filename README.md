@@ -360,7 +360,6 @@ export class ParentComponent {
 
 ## 4. Buenas Prácticas y Próximos Pasos
 
-- **Arquitectura modular:** Organizar cada conjunto de componentes y servicios en su propio módulo para facilitar el mantenimiento y escalabilidad.
 - **Lazy loading:** Cargar módulos de forma diferida cuando sean necesarios, reduciendo el tamaño del bundle inicial.
 - **Documentación interna:** Comentar funciones relevantes y explicar la lógica central de servicios y componentes.
 - **Pruebas automatizadas:** Añadir `*.spec.ts` en cada componente y servicio para garantizar la calidad futura de la aplicación.
