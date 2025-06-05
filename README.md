@@ -246,7 +246,6 @@ export class ParentComponent {
 | **Cuándo usarlo**              | - Proyectos legacy o módulos sencillos que no requieran migrar a señales.<br> - Casos donde el sobrecosto de `EventEmitter` es aceptable.         | - Nuevos proyectos o módulos donde se busque un enfoque totalmente reactivo.<br> - Componentes con alta frecuencia de eventos que requieren eficiencia.      |
 
 > [!NOTE]
->
 > - @Output() seguirá existiendo para garantizar compatibilidad plena.
 > - output() impulsa una evolución hacia un sistema de eventos más reactivo y optimizado para Angular en el futuro.
 
@@ -290,8 +289,6 @@ export class ParentComponent {
 3. **Arrancar la aplicación**
    - `ng serve`
    - Observar que al escribir en el `<input>`, el `<p>` se actualiza en tiempo real.
-
----
 
 ### 3.6 `05-http-service` – Servicio y Llamadas HTTP
 
@@ -361,33 +358,7 @@ export class ParentComponent {
    - `ng serve`
    - Comprobar que la lista de títulos de posts se muestra correctamente.
 
----
-
-## 4. Instrucciones Generales de Uso
-
-1. **Clonar el repositorio y acceder a la carpeta**
-   ```bash
-   git clone https://github.com/usuario/repositorio-angular.git
-   cd repositorio-angular
-   npm install
-   ```
-2. **Cambiar a la rama correspondiente**
-   - Por ejemplo, para ver el ejemplo de componentes:
-     ```bash
-     git checkout 01-components
-     ```
-3. **Instalar dependencias e iniciar**
-   ```bash
-   npm install
-   npm start  # o ng serve -o
-   ```
-4. **Explorar el código**
-   - Cada carpeta de la rama contiene un README que describe los cambios realizados y qué archivos revisar.
-   - La rama `master` muestra el código final tal como se espera una vez completados todos los ejemplos.
-
----
-
-## 5. Buenas Prácticas y Próximos Pasos
+## 4. Buenas Prácticas y Próximos Pasos
 
 - **Arquitectura modular:** Organizar cada conjunto de componentes y servicios en su propio módulo para facilitar el mantenimiento y escalabilidad.
 - **Lazy loading:** Cargar módulos de forma diferida cuando sean necesarios, reduciendo el tamaño del bundle inicial.
