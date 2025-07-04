@@ -45,8 +45,8 @@ export class AppComponent {
 }
 ```
 
-> ![NOTE]
-> Explicación: En componentes standalone, los módulos como ReactiveFormsModule se importan directamente dentro del decorador @Component. Esto permite usar formGroup, formControlName, etc. sin necesidad de NgModules tradicionales.
+> [!NOTE]
+> En componentes standalone, los módulos como ReactiveFormsModule se importan directamente dentro del decorador @Component. Esto permite usar formGroup, formControlName, etc. sin necesidad de NgModules tradicionales.
 
 ## Paso 3: Crear el `FormGroup` en el componente
 
@@ -69,14 +69,11 @@ Declara la variable dentro de la clase que contendrá el formulario:
   }
 ```
 
-> ![NOTE]
-> **Explicación:**
+> [!NOTE]
 > - `FormBuilder` es un servicio que facilita la creación de formularios.
 > - `FormGroup` es un contenedor para los controles del formulario.
 > - `ngOnInit` es un ciclo de vida del componente donde inicializamos el formulario.
 > - `this.fb.group({})` crea un nuevo `FormGroup` vacío.
-
----
 
 ## Paso 4: Añadir controles al formulario
 
@@ -102,7 +99,7 @@ ngOnInit() {
 </form>
 ```
 
-> ![NOTE]
+> [!NOTE]
 > - `formGroup` vincula el formulario al `FormGroup` del componente.
 > - `formControlName` vincula el control `nombre` al campo de entrada.
 
@@ -114,10 +111,8 @@ onSubmit() {
 }
 ```
 
-> ![TIP]
+> [!TIP]
 > **Prueba:** Inicia la aplicación, escribe un nombre y haz clic en "Enviar". Verás el objeto `{ nombre: 'valor' }` en la consola.
-
----
 
 ## Paso 5: Incorporar más campos y validaciones básicas
 
@@ -128,7 +123,7 @@ Ampliaremos el formulario con más controles: **email** y **contraseña**. Adem�
    import { Validators } from '@angular/forms';
    ```
 
->![NOTE]
+> [!NOTE]
 > **Extructura del controlador**
 > - Cada control se define como un array con el valor inicial y los validadores.
 > - Por ejemplo, `['', [Validators.required]]` significa que el campo es obligatorio.
@@ -168,10 +163,8 @@ ngOnInit() {
   </small>
 </div>
 ```
-> ![IMPORTANT]
+> [!IMPORTANT]
 > **Nota importante:** Usamos `touched` para que el mensaje sólo aparezca tras salir del campo.
-
----
 
 ## Paso 6: Validaciones avanzadas y validación a nivel de grupo
 
