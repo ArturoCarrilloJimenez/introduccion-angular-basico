@@ -20,58 +20,45 @@ Angular ofrece dos enfoques para manejar formularios:
 > - Validaciones más predecibles.
 > - Fácil composición de formularios complejos.
 
-## Paso 2: Preparar el módulo de Angular
+## Paso 2: Preparar el componente standalone para usar Reactive Forms
 
-Antes de escribir cualquier formulario, debes indicar a Angular que vas a usar Reactive Forms. Para ello:
+En primer lugar vamos a creaer un componente standalone que usará Reactive Forms. Si estás usando Angular con la __Standalone__, no necesitas NgModule, sino que importarás los módulos directamente en el decorador del componente.
 
-1. Abre tu archivo `app.module.ts` (o el módulo correspondiente).
-2. Importa `ReactiveFormsModule` desde `@angular/forms`.
-3. Añádelo al array `imports`.
+1. Abre el componente donde usarás formularios.
+2. Importa ``ReactiveFormsModule`` desde ``@angular/forms``.
+3. Añádelo al array imports dentro del decorador ``@Component``.
 
 ```ts
-// app.module.ts
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-// Importamos ReactiveFormsModule
-import { ReactiveFormsModule } from '@angular/forms';
-import { AppComponent } from './app.component';
+// app.component.ts
+import { Component } from '@angular/core';
+import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
-@NgModule({
-  declarations: [AppComponent],
-  imports: [
-    BrowserModule,
-    ReactiveFormsModule  // <-- Habilita formularios reactivos
-  ],
-  bootstrap: [AppComponent]
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule], // <-- Aquí se importa
+  templateUrl: './app.component.html',
 })
-export class AppModule {}
+export class AppComponent {
+  // Tu lógica aquí
+}
 ```
 
-> **Explicación:** Al añadir `ReactiveFormsModule`, habilitas en tus plantillas las directivas necesarias (`formGroup`, `formControlName`, etc.).
-
----
+> ![NOTE]
+> Explicación: En componentes standalone, los módulos como ReactiveFormsModule se importan directamente dentro del decorador @Component. Esto permite usar formGroup, formControlName, etc. sin necesidad de NgModules tradicionales.
 
 ## Paso 3: Crear el `FormGroup` en el componente
 
-Vamos a crear un nuevo componente llamado `mi-formulario`. Dentro, definiremos un objeto `FormGroup`, que será el contenedor de todos los campos:
-
-1. Genera el componente:
-   ```bash
-   ng generate component mi-formulario
-   ```
-2. En `mi-formulario.component.ts`, importa lo siguiente:
+Para manejar formularios reactivos, necesitamos crear un `FormGroup` que contendrá nuestros controles de formulario.
 
 ```ts
-import { Component, OnInit } from '@angular/core';
-// Importamos FormBuilder para facilitar la creación
 import { FormBuilder, FormGroup } from '@angular/forms';
 ```
 
-3. Declara la variable que contendrá el formulario:
+Declara la variable dentro de la clase que contendrá el formulario:
 
 ```ts
-export class MiFormularioComponent implements OnInit {
-  // Aquí guardaremos nuestro formulario reactivo
   miFormulario: FormGroup;
 
   constructor(private fb: FormBuilder) {}  
@@ -80,13 +67,14 @@ export class MiFormularioComponent implements OnInit {
     // Por ahora lo inicializamos vacío
     this.miFormulario = this.fb.group({});
   }
-}
 ```
 
-> **¿Qué hace **``**?**
->
-> - Es una clase que simplifica la creación de formularios.
-> - En lugar de `new FormGroup({...})`, llamamos a `this.fb.group({...})`.
+> ![NOTE]
+> **Explicación:**
+> - `FormBuilder` es un servicio que facilita la creación de formularios.
+> - `FormGroup` es un contenedor para los controles del formulario.
+> - `ngOnInit` es un ciclo de vida del componente donde inicializamos el formulario.
+> - `this.fb.group({})` crea un nuevo `FormGroup` vacío.
 
 ---
 
@@ -114,6 +102,10 @@ ngOnInit() {
 </form>
 ```
 
+> ![NOTE]
+> - `formGroup` vincula el formulario al `FormGroup` del componente.
+> - `formControlName` vincula el control `nombre` al campo de entrada.
+
 3. Añade la función `onSubmit` en el componente para ver los valores:
 
 ```ts
@@ -122,6 +114,7 @@ onSubmit() {
 }
 ```
 
+> ![TIP]
 > **Prueba:** Inicia la aplicación, escribe un nombre y haz clic en "Enviar". Verás el objeto `{ nombre: 'valor' }` en la consola.
 
 ---
@@ -134,6 +127,13 @@ Ampliaremos el formulario con más controles: **email** y **contraseña**. Adem�
    ```ts
    import { Validators } from '@angular/forms';
    ```
+
+>![NOTE]
+> **Extructura del controlador**
+> - Cada control se define como un array con el valor inicial y los validadores.
+> - Por ejemplo, `['', [Validators.required]]` significa que el campo es obligatorio.
+> - En este caso, el primer elemento es el valor inicial (vacío) y el segundo es un array de validadores sincrónos.
+
 2. Define los controles con validadores:
 
 ```ts
@@ -168,7 +168,7 @@ ngOnInit() {
   </small>
 </div>
 ```
-
+> ![IMPORTANT]
 > **Nota importante:** Usamos `touched` para que el mensaje sólo aparezca tras salir del campo.
 
 ---
