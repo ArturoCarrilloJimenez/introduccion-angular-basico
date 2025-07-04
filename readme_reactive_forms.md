@@ -112,7 +112,7 @@ onSubmit() {
 ```
 
 > [!TIP]
-> **Prueba:** Inicia la aplicación, escribe un nombre y haz clic en "Enviar". Verás el objeto `{ nombre: 'valor' }` en la consola.
+> Inicia la aplicación, escribe un nombre y haz clic en "Enviar". Verás el objeto `{ nombre: 'valor' }` en la consola.
 
 ## Paso 5: Incorporar más campos y validaciones básicas
 
@@ -164,7 +164,7 @@ ngOnInit() {
 </div>
 ```
 > [!IMPORTANT]
-> **Nota importante:** Usamos `touched` para que el mensaje sólo aparezca tras salir del campo.
+> Usamos `touched` para que el mensaje sólo aparezca tras salir del campo.
 
 ## Paso 6: Validaciones avanzadas y validación a nivel de grupo
 
@@ -196,7 +196,7 @@ private passwordsIgualesValidator(pwKey: string, cpwKey: string) {
 }
 ```
 
-3. Mues*tra el error en la plantilla:*
+3. Muestra el error en la plantilla:
 
 ```html
 <small *ngIf="miFormulario.hasError('passwordMismatch')">
@@ -229,25 +229,30 @@ private edadMinimaValidator(minEdad: number) {
 
 ```html
 <small *ngIf="miFormulario.get('fechaNacimiento').hasError('edadMenor')">
-  Debes ser al menos de {{18}} años.
+  Debes ser al menos de 18 años.
 </small>
 ```
 
----
-
 ## Paso 7: Validación asíncrona de email
 
-Para simular comprobación en servidor:
+Para validar si un email ya está registrado, usaremos un validador asíncrono. Este ejemplo simula una llamada a un backend.
+
+Noralmente, usarías un servicio HTTP para verificar el email, pero aquí lo haremos con un array simulado.
 
 1. Declara un array de emails existentes:
-   ```ts
-   private emailsExistentes = [
-     'usuario1@ejemplo.com',
-     'admin2@dominio.org',
-     'test3@correo.net'
-   ];
-   ```
+
+```ts
+private emailsExistentes = [
+  'usuario1@ejemplo.com',
+  'admin2@dominio.org',
+  'test3@correo.net'
+];
+```
+  
 2. Crea el validador asíncrono con `of()` y `delay()`:
+
+> [!NOTE]
+> ``of()`` crea un observable que emite el valor dado, y ``delay()`` simula una espera de 1 segundo antes de emitir el valor.
 
 ```ts
 import { AsyncValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
@@ -279,30 +284,12 @@ email: ['', [Validators.email], [this.emailAsyncValidator()]]
 </small>
 ```
 
-> **Cómo llevarlo a producción:** cambia `of()` por `this.http.get` a tu API.
+> [!TIP]
+> Cambia `of()` por `this.http.get` a tu API.
 
 ---
 
-## Paso 8: Resumen final y estilo de presentación
-
-Has visto:
-
-- Configuración del módulo.
-- Creación paso a paso del `FormGroup`.
-- Añadir controles uno a uno.
-- Validaciones sincrónicas y asincrónicas.
-- Validaciones a nivel de grupo.
-- Varias formas de mostrar errores.
-
-Ahora, ajusta este ejemplo a tu proyecto:
-
-- Añade más campos (dirección, teléfono…).
-- Cambia estilos CSS o utiliza librerías de UI.
-- Integra validaciones reales contra tu backend.
-
----
-
-## Paso 9: Lista rápida de validaciones útiles
+## Extra: Lista rápida de validaciones útiles
 
 Para facilitar tu trabajo, aquí tienes las validaciones clasificadas por frecuencia de uso y recomendaciones:
 
@@ -334,9 +321,25 @@ Para facilitar tu trabajo, aquí tienes las validaciones clasificadas por frecue
 | Validadores extensos con  | Expresiones regulares muy complejas o cadenas demasiado largas.             | Difíciles de mantener y debuggear.         |
 | `Validators.min`/`max`    | Para valores numéricos, pero puede generar confusión sin control adicional. | Usar con cuidado en formularios numéricos. |
 
-> **Tip:** Utiliza validadores integrados siempre que el caso lo permita. Reserva los custom y asíncronos para necesidades específicas.
+> [!TIP]
+> Utiliza validadores integrados siempre que el caso lo permita. Reserva los custom y asíncronos para necesidades específicas.
 
----
+## Conclusión
 
-¡Con esta clasificación rápida, tendrás claro cuándo y cómo usar cada tipo de validador en tus formularios reactivos! 🎯
+Has aprendido a crear un formulario reactivo en Angular desde cero, incluyendo:
 
+- Creación paso a paso del `FormGroup`.
+- Añadir controles uno a uno.
+- Validaciones sincrónicas y asincrónicas.
+- Validaciones a nivel de grupo.
+- Varias formas de mostrar errores.
+
+Ahora, ajusta este ejemplo a tu proyecto:
+
+- Añade más campos (dirección, teléfono…).
+- Cambia estilos CSS o utiliza librerías de UI.
+- Integra validaciones reales contra tu backend.
+
+## Recursos adicionales
+- [Documentación oficial de Angular sobre Reactive Forms](https://angular.io/guide/reactive-forms)
+- [Guía de validaciones en Angular](https://angular.io/guide/form-validation)
